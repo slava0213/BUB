@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Попутчики — найдите поездку</title>
+  <link rel="icon" type="image/svg+xml" href="images/favicon.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;700;800&family=Unbounded:wght@600;800&display=swap&subset=cyrillic" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body data-page="home">
+  <main>
+    <section class="hero">
+      <div class="hero-main">
+        <h1>Едем вместе — <em>дешевле</em> и веселее</h1>
+        <p class="hero-lead">Найдите попутчиков по всей России: делите расходы на дорогу, знакомьтесь с интересными людьми и добирайтесь с комфортом.</p>
+
+        <form class="quick-search" action="search.html" method="get">
+          <div><label for="q-from">Откуда</label><input id="q-from" name="from" placeholder="Москва" /></div>
+          <div><label for="q-to">Куда</label><input id="q-to" name="to" placeholder="Казань" /></div>
+          <div><label for="q-date">Когда</label><input id="q-date" name="date" type="date" /></div>
+          <button type="submit">🔍 Найти</button>
+        </form>
+
+        <div class="chips" aria-label="Популярные маршруты">
+          <a class="chip" href="search.html?from=Москва&to=Санкт-Петербург">🏛️ Москва → Питер</a>
+          <a class="chip" href="search.html?from=Москва&to=Казань">🕌 Москва → Казань</a>
+          <a class="chip" href="search.html?from=Краснодар&to=Сочи">🏖️ Краснодар → Сочи</a>
+          <a class="chip" href="search.html?from=Екатеринбург&to=Челябинск">🏔️ Екб → Челябинск</a>
+          <a class="chip" href="search.html?from=Новосибирск&to=Томск">🌲 Новосибирск → Томск</a>
+        </div>
+      </div>
+
+      <div class="scene" aria-hidden="true">
+        <div class="sun"></div>
+        <div class="hills"></div>
+        <div class="pin p1">Москва → Казань<small>от 1 800 ₽</small></div>
+        <div class="pin p2">⭐ 4.9 водитель<small>12 поездок</small></div>
+        <div class="pin p3">💺 Осталось 2 места<small>завтра, 06:30</small></div>
+        <div class="road"></div>
+        <div class="car">🚗</div>
+      </div>
+    </section>
+
+    <section class="stats" id="stats">
+      <div class="stat"><span class="stat-icon">🚗</span><div class="stat-value" id="stat-trips">0</div><div class="stat-label">поездок</div></div>
+      <div class="stat"><span class="stat-icon">👥</span><div class="stat-value" id="stat-users">0</div><div class="stat-label">пользователей</div></div>
+      <div class="stat"><span class="stat-icon">🌆</span><div class="stat-value" id="stat-cities">0</div><div class="stat-label">городов</div></div>
+      <div class="stat"><span class="stat-icon">🤝</span><div class="stat-value" id="stat-seats">0</div><div class="stat-label">мест забронировано</div></div>
+    </section>
+
+    <section class="section">
+      <div class="section-head">
+        <div><h2>Ближайшие поездки</h2><p>Выберите маршрут и отправьте заявку водителю</p></div>
+        <a class="btn" href="create-trip.html">➕ Предложить свою</a>
+      </div>
+      <div class="trips-grid" id="trips-list"><div class="empty"><span class="big">⏳</span>Загружаем поездки...</div></div>
+    </section>
+
+    <section class="section">
+      <h2>Как это работает</h2>
+      <div class="steps">
+        <div class="card step"><h3>Найдите поездку</h3><p>Введите город, дату — и увидите все подходящие маршруты с ценой и рейтингом водителя.</p></div>
+        <div class="card step"><h3>Отправьте заявку</h3><p>Водитель получит уведомление в профиле. Можно сразу написать ему в чат и уточнить детали.</p></div>
+        <div class="card step"><h3>Поезжайте и оцените</h3><p>После поездки оставьте отзыв — так сервис становится безопаснее для всех.</p></div>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>Почему попутчики</h2>
+      <div class="features">
+        <div class="feature"><div class="feature-icon">💰</div><h3>Дешевле</h3><p>Делите бензин, платные дороги и парковку.</p></div>
+        <div class="feature"><div class="feature-icon">🤝</div><h3>Надёжнее</h3><p>Отзывы и рейтинг водителей помогают выбрать.</p></div>
+        <div class="feature"><div class="feature-icon">💬</div><h3>Удобнее</h3><p>Чат с индикатором «печатает» и онлайн-статусом.</p></div>
+        <div class="feature"><div class="feature-icon">🌍</div><h3>Куда угодно</h3><p>От соседнего города до другого конца страны.</p></div>
+      </div>
+    </section>
+  </main>
+
+  <script src="js/config.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/layout.js"></script>
+  <script src="js/trips.js"></script>
+  <script>
+    document.getElementById('q-date').min = new Date().toISOString().slice(0, 10);
+    loadTrips(); loadStats();
+  </script>
+</body>
+</html>

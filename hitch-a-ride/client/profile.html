@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Профиль — Попутчики</title>
+  <link rel="icon" type="image/svg+xml" href="images/favicon.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;700;800&family=Unbounded:wght@600;800&display=swap&subset=cyrillic" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body data-page="profile">
+  <main>
+    <div class="page-title">
+      <h1>Мой профиль</h1>
+      <p>Данные, поездки, заявки и отзывы — всё в одном месте.</p>
+    </div>
+
+    <div class="grid-2">
+      <div class="stack">
+        <form class="panel" id="profile-form">
+          <div class="profile-head">
+            <div id="p-avatar"></div>
+            <div><h2 id="p-title">—</h2><div id="p-rating" style="color:var(--muted);font-weight:700"></div></div>
+          </div>
+          <div id="profile-error" class="message-error" style="display:none"></div>
+
+          <label for="p-name">Имя</label>
+          <input type="text" id="p-name" required />
+          <label for="p-email">Email</label>
+          <input type="email" id="p-email" disabled />
+          <label for="p-phone">Телефон</label>
+          <input type="tel" id="p-phone" placeholder="+7 ..." />
+          <label for="p-bio">О себе</label>
+          <textarea id="p-bio" rows="3" placeholder="Расскажите о себе"></textarea>
+
+          <button type="submit">💾 Сохранить</button>
+        </form>
+
+        <section class="panel"><h2>🚗 Мои поездки</h2><div id="my-trips"></div></section>
+        <section class="panel"><h2>⭐ Отзывы обо мне</h2><div id="reviews-list"></div></section>
+      </div>
+
+      <div class="stack">
+        <section class="panel"><h2>📥 Заявки на мои поездки</h2><div id="incoming-requests"></div></section>
+        <section class="panel"><h2>✋ Мои заявки</h2><div id="my-requests"></div></section>
+      </div>
+    </div>
+  </main>
+
+  <div id="review-modal" class="modal-overlay" style="display:none">
+    <div class="modal">
+      <h2>Отзыв о водителе</h2>
+      <p>Водитель: <strong id="review-driver-name">—</strong></p>
+      <div id="review-stars" class="stars">
+        <span onclick="setRating(1)">☆</span><span onclick="setRating(2)">☆</span><span onclick="setRating(3)">☆</span>
+        <span onclick="setRating(4)">☆</span><span onclick="setRating(5)">☆</span>
+      </div>
+      <label for="review-text">Комментарий (необязательно)</label>
+      <textarea id="review-text" rows="3" placeholder="Как прошла поездка?"></textarea>
+      <div id="review-error" class="message-error" style="display:none"></div>
+      <div class="modal-actions">
+        <button class="btn btn-secondary" onclick="closeReviewModal()">Отмена</button>
+        <button class="btn" onclick="submitReview()">Отправить отзыв</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/config.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/layout.js"></script>
+  <script src="js/trips.js"></script>
+  <script src="js/profile.js"></script>
+</body>
+</html>

@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Создать поездку — Попутчики</title>
+  <link rel="icon" type="image/svg+xml" href="images/favicon.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;700;800&family=Unbounded:wght@600;800&display=swap&subset=cyrillic" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body data-page="create">
+  <main>
+    <div class="page-title">
+      <h1>Создать поездку</h1>
+      <p>Расскажите, куда едете — попутчики сами найдут вас.</p>
+    </div>
+
+    <div class="grid-aside">
+      <form class="panel" id="trip-form">
+        <div id="error" class="message-error" style="display:none"></div>
+
+        <div class="form-row">
+          <div><label for="from_city">Откуда</label><input type="text" id="from_city" placeholder="Москва" required /></div>
+          <div><label for="to_city">Куда</label><input type="text" id="to_city" placeholder="Казань" required /></div>
+        </div>
+        <div class="form-row">
+          <div><label for="date">Дата</label><input type="date" id="date" required /></div>
+          <div><label for="time">Время</label><input type="time" id="time" value="08:00" required /></div>
+        </div>
+        <div class="form-row">
+          <div><label for="seats">Свободных мест</label><input type="number" id="seats" min="1" max="8" value="3" required /></div>
+          <div><label for="price">Цена с человека, ₽</label><input type="number" id="price" min="0" value="1000" required /></div>
+        </div>
+
+        <label for="description">Описание</label>
+        <textarea id="description" rows="3" maxlength="500" placeholder="Где встретимся, сколько багажа, можно ли с животными..."></textarea>
+
+        <button type="submit" class="btn-large">🚀 Опубликовать</button>
+      </form>
+
+      <div class="stack">
+        <div>
+          <p class="preview-label">Так увидят вашу поездку</p>
+          <div id="preview" style="pointer-events:none" aria-hidden="true"></div>
+        </div>
+        <div class="aside-card">
+          <h3>Советы водителю</h3>
+          <ul>
+            <li>Укажите точное место встречи</li>
+            <li>Честно напишите про багаж</li>
+            <li>Отвечайте на заявки быстрее</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script src="js/config.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/layout.js"></script>
+  <script src="js/trips.js"></script>
+  <script>
+    (async function () {
+      const me = await getCurrentUser();
+      if (!me) { location.href = 'login.html'; return; }
+
+      const $ = function (id) { return document.getElementById(id); };
+      const today = new Date().toISOString().slice(0, 10);
+      $('date').min = today;
+      $('date').value = today;
+
+      function drawPreview() {
+        $('preview').innerHTML = renderTripCard({
+          id: 1, driver_id: me.id, driver: me.name, driver_rating: me.rating,
+          from_city: $('from_city').value || 'Откуда', to_city: $('to_city').value || 'Куда',
+          date: $('date').value || today, time: $('time').value || '--:--',
+          seats: Number($('seats').value) || 0, price: Number($('price').value) || 0,
+          description: $('description').value
+        }, { id: -1 });   // «чужой» пользователь — чтобы показать кнопки как у пассажира
+      }
+      ['from_city', 'to_city', 'date', 'time', 'seats', 'price', 'description'].forEach(function (id) {
+        $(id).addEventListener('input', drawPreview);
+      });
+      drawPreview();
+
+      $('trip-form').addEventListener('submit', async function (e) {
+        e.preventDefault();
+        const errBox = $('error');
+        errBox.style.display = 'none';
+        try {
+          await Api.post('/trips', {
+            from_city: $('from_city').value.trim(), to_city: $('to_city').value.trim(),
+            date: $('date').value, time: $('time').value,
+            seats: Number($('seats').value), price: Number($('price').value),
+            description: $('description').value.trim()
+          });
+          location.href = 'index.html';
+        } catch (err) {
+          errBox.textContent = err.message;
+          errBox.style.display = 'block';
+        }
+      });
+    })();
+  </script>
+</body>
+</html>

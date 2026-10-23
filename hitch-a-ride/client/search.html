@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Поиск поездок — Попутчики</title>
+  <link rel="icon" type="image/svg+xml" href="images/favicon.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;700;800&family=Unbounded:wght@600;800&display=swap&subset=cyrillic" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body data-page="search">
+  <main>
+    <div class="page-title">
+      <h1>Поиск поездок</h1>
+      <p>Оставьте поля пустыми, чтобы увидеть все предложения.</p>
+    </div>
+
+    <form class="panel" id="search-form">
+      <div class="filters">
+        <div><label for="s-from">Откуда</label><input type="text" id="s-from" placeholder="Любой город" /></div>
+        <div><label for="s-to">Куда</label><input type="text" id="s-to" placeholder="Любой город" /></div>
+        <div><label for="s-date">Дата</label><input type="date" id="s-date" /></div>
+        <button type="submit">🔍 Найти</button>
+      </div>
+    </form>
+
+    <div class="results-bar">
+      <strong id="count">Найдено: 0</strong>
+      <select id="sort" aria-label="Сортировка">
+        <option value="date">Сначала ближайшие</option>
+        <option value="price">Сначала дешёвые</option>
+        <option value="rating">По рейтингу водителя</option>
+      </select>
+    </div>
+
+    <div class="trips-grid" id="search-results"></div>
+  </main>
+
+  <script src="js/config.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/layout.js"></script>
+  <script src="js/trips.js"></script>
+  <script src="js/search.js"></script>
+</body>
+</html>
