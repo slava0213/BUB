@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#172b4d" />
+  <title>Геолокация поездки — Попутчики</title>
+  <link rel="icon" type="image/svg+xml" href="images/favicon.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap&subset=cyrillic" rel="stylesheet" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/tracking.css" />
+</head>
+<body data-page="tracking">
+  <main class="tracking-page">
+    <div class="tracking-heading">
+      <div><div class="eyebrow">ПОПУТЧИКИ / МОНИТОРИНГ ПОЕЗДКИ</div><h1>Геолокация водителя</h1>
+      <p>Положение автомобиля и расчёт времени прибытия обновляются по мере поступления GPS-координат.</p></div>
+      <a class="btn btn-secondary" href="search.html">← К поездкам</a>
+    </div>
+    <div id="tracking-alert" class="tracking-alert">Загружаем данные поездки…</div>
+    <section class="tracking-layout">
+      <div class="map-panel">
+        <div class="map-topline"><span><i class="live-dot"></i> КАРТА ПОЕЗДКИ</span><span id="map-updated">Ожидание координат</span></div>
+        <div id="trip-map" aria-label="Карта с местоположением водителя"></div>
+        <div class="map-legend"><span><i class="legend-car">🚗</i> Автомобиль</span><span><i class="legend-dest"></i> Точка прибытия</span><span><i class="legend-route"></i> Маршрут</span></div>
+      </div>
+      <aside class="tracking-sidebar">
+        <div class="eta-card"><div class="eyebrow">РАСЧЁТНОЕ ПРИБЫТИЕ</div><div id="eta-value" class="eta-value">—</div><div id="eta-caption" class="muted">Ожидаем координаты водителя</div><div class="eta-divider"></div><div class="metric-row"><span>Осталось в пути</span><b id="distance-value">—</b></div><div class="metric-row"><span>Последнее обновление</span><b id="freshness-value">—</b></div></div>
+        <div class="route-card"><div class="eyebrow">МАРШРУТ</div><div class="route-city"><span class="route-point start"></span><div><small>ОТПРАВЛЕНИЕ</small><b id="from-city">—</b></div></div><div class="route-line"></div><div class="route-city"><span class="route-point finish"></span><div><small>ПРИБЫТИЕ</small><b id="to-city">—</b></div></div></div>
+        <div id="driver-controls" class="driver-controls" hidden><div class="eyebrow">УПРАВЛЕНИЕ ГЕОЛОКАЦИЕЙ</div><p>Разрешите доступ к геопозиции. Пока передача включена, пассажиры с подтверждённой заявкой смогут видеть ваше положение.</p><button id="start-sharing" class="btn tracking-primary" type="button">Включить передачу GPS</button><button id="stop-sharing" class="btn btn-secondary" type="button" hidden>Остановить передачу</button><div id="gps-status" class="gps-status">Передача не запущена</div></div>
+        <div class="privacy-note">🔒 Координаты доступны только водителю и пассажирам с принятой заявкой. Для работы GPS требуется разрешение браузера и защищённое соединение HTTPS.</div>
+      </aside>
+    </section>
+    <p class="tracking-footnote">Время прибытия является оценкой: фактическое время зависит от дорожной обстановки и точности GPS.</p>
+  </main>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="js/config.js"></script><script src="js/api.js"></script><script src="js/auth.js"></script><script src="js/layout.js"></script><script src="js/tracking.js"></script>
+</body></html>

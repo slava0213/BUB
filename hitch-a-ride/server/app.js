@@ -321,6 +321,59 @@ function decide(req, res, status) {
 app.post('/api/requests/:id/accept', auth, function (req, res) { decide(req, res, 'принята'); });
 app.post('/api/requests/:id/reject', auth, function (req, res) { decide(req, res, 'отклонена'); });
 
+
+/* ─────────── LIVE GPS TRACKING ─────────── */
+// Последняя координата хранится в памяти сервера; она доступна только участникам поездки.
+const liveLocations = Object.create(null);
+
+function trackingAccess(req, res, next) {
+  const tripId = Number(req.params.id);
+  const trip = db.prepare('SELECT * FROM trips WHERE id = ?').get(tripId);
+  if (!trip) return res.status(404).json({ error: 'Поездка не найдена' });
+  const isDriver = Number(trip.driver_id) === Number(req.user.id);
+  const accepted = db.prepare('SELECT * FROM requests').all().some(function (r) {
+    return Number(r.trip_id) === tripId &&
+      Number(r.passenger_id) === Number(req.user.id) && r.status === 'принята';
+  });
+  if (!isDriver && !accepted)
+    return res.status(403).json({ error: 'Отслеживание доступно водителю и пассажирам с подтверждённой заявкой' });
+  req.trip = trip;
+  req.isTripDriver = isDriver;
+  next();
+}
+
+app.post('/api/trips/:id/location', auth, trackingAccess, function (req, res) {
+  if (!req.isTripDriver) return res.status(403).json({ error: 'Передавать геопозицию может только водитель' });
+  const lat = Number(req.body.lat), lng = Number(req.body.lng);
+  if (!Number.isFinite(lat) || !Number.isFinite(lng) || lat < -90 || lat > 90 || lng < -180 || lng > 180)
+    return res.status(400).json({ error: 'Некорректные координаты' });
+  liveLocations[req.trip.id] = {
+    lat: lat, lng: lng,
+    accuracy: Math.min(10000, Math.max(0, Number(req.body.accuracy) || 0)),
+    heading: Number.isFinite(Number(req.body.heading)) ? Number(req.body.heading) : null,
+    speed: Number.isFinite(Number(req.body.speed)) ? Number(req.body.speed) : null,
+    updatedAt: Date.now()
+  };
+  res.json({ ok: true, updatedAt: liveLocations[req.trip.id].updatedAt });
+});
+
+app.get('/api/trips/:id/location', auth, trackingAccess, function (req, res) {
+  const point = liveLocations[req.trip.id] || null;
+  const driver = db.prepare('SELECT * FROM users WHERE id = ?').get(req.trip.driver_id);
+  res.json({
+    location: point,
+    driver: driver ? { name: driver.name } : { name: 'Водитель' },
+    trip: { id: req.trip.id, from_city: req.trip.from_city, to_city: req.trip.to_city, date: req.trip.date, time: req.trip.time },
+    isDriver: req.isTripDriver
+  });
+});
+
+app.delete('/api/trips/:id/location', auth, trackingAccess, function (req, res) {
+  if (!req.isTripDriver) return res.status(403).json({ error: 'Остановить передачу может только водитель' });
+  delete liveLocations[req.trip.id];
+  res.json({ ok: true });
+});
+
 /* ─────────── MESSAGES ─────────── */
 
 app.get('/api/trips/:id/messages', auth, tripAccess, function (req, res) {
@@ -383,85 +436,6 @@ app.get('/api/trips/:id/online', auth, tripAccess, function (req, res) {
     if (id !== req.user.id && onlineUsers[id] && now - onlineUsers[id] < 15000) online.push(id);
   });
   res.json({ online: online });
-});
-
-/* ─────────── ТРЕКИНГ ВОДИТЕЛЯ ─────────── */
-
-// Последняя геопозиция водителя по каждой поездке (только в памяти, в БД не пишем).
-const driverLocations = {};          // tripId -> { lat, lng, accuracy, ts, arrived }
-const LOCATION_TTL = 30 * 1000;      // позиция старше 30 сек считается «трансляция остановлена»
-
-// Доступ: водитель поездки или пассажир с ПРИНЯТОЙ заявкой
-function trackAccess(req, res, next) {
-  const tripId = Number(req.params.id);
-  const trip = db.prepare('SELECT * FROM trips WHERE id = ?').get(tripId);
-  if (!trip) return res.status(404).json({ error: 'Поездка не найдена' });
-
-  const isDriver = trip.driver_id === req.user.id;
-  if (!isDriver) {
-    const ok = db.prepare('SELECT * FROM requests').all().some(function (r) {
-      return r.trip_id === tripId && r.passenger_id === req.user.id && r.status === 'принята';
-    });
-    if (!ok) return res.status(403).json({ error: 'Отслеживание доступно пассажирам с принятой заявкой' });
-  }
-  req.trip = trip;
-  req.isDriver = isDriver;
-  next();
-}
-
-function driverOnly(req, res, next) {
-  if (!req.isDriver) return res.status(403).json({ error: 'Только водитель может это делать' });
-  next();
-}
-
-// Водитель отправляет свою позицию
-app.post('/api/trips/:id/location', auth, trackAccess, driverOnly, function (req, res) {
-  const lat = Number(req.body.lat), lng = Number(req.body.lng);
-  const accuracy = Number(req.body.accuracy) || 0;
-  if (!isFinite(lat) || !isFinite(lng) || Math.abs(lat) > 90 || Math.abs(lng) > 180)
-    return res.status(400).json({ error: 'Некорректные координаты' });
-
-  const prev = driverLocations[req.trip.id];
-  driverLocations[req.trip.id] = {
-    lat: lat, lng: lng, accuracy: accuracy, ts: Date.now(),
-    arrived: prev ? prev.arrived : false
-  };
-  res.json({ ok: true });
-});
-
-// Водитель останавливает трансляцию
-app.post('/api/trips/:id/location/stop', auth, trackAccess, driverOnly, function (req, res) {
-  delete driverLocations[req.trip.id];
-  res.json({ ok: true });
-});
-
-// Водитель нажал «Я на месте» — ставим флаг и пишем в чат поездки
-app.post('/api/trips/:id/arrived', auth, trackAccess, driverOnly, function (req, res) {
-  const loc = driverLocations[req.trip.id];
-  if (loc && loc.arrived) return res.json({ ok: true });
-
-  driverLocations[req.trip.id] = Object.assign(loc || { lat: null, lng: null, accuracy: 0, ts: Date.now() }, { arrived: true });
-  db.prepare('INSERT INTO messages (trip_id, author_id, text) VALUES (?, ?, ?)')
-    .run(req.trip.id, req.user.id, '🚗 Водитель на месте! Выходите.');
-  res.json({ ok: true });
-});
-
-// Все участники смотрят, где водитель
-app.get('/api/trips/:id/location', auth, trackAccess, function (req, res) {
-  const loc = driverLocations[req.trip.id];
-  if (!loc) return res.json({ active: false, arrived: false });
-
-  const age = Date.now() - loc.ts;
-  const active = age < LOCATION_TTL && loc.lat !== null;
-  res.json({
-    active:     active,
-    arrived:    !!loc.arrived,
-    lat:        active ? loc.lat : null,
-    lng:        active ? loc.lng : null,
-    accuracy:   loc.accuracy,
-    updated_at: new Date(loc.ts).toISOString(),
-    age_sec:    Math.round(age / 1000)
-  });
 });
 
 /* ─────────── REVIEWS ─────────── */

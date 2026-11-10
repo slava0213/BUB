@@ -1,0 +1,37 @@
+/* Строгий интерфейс мониторинга поездки */
+.tracking-page{width:min(1200px,calc(100% - 2.5rem));margin:2.5rem auto 4rem}
+.tracking-heading{display:flex;justify-content:space-between;align-items:end;gap:1rem;margin-bottom:1.4rem}
+.tracking-heading h1{font:800 clamp(1.8rem,4vw,2.5rem) var(--font);letter-spacing:-.04em;color:#172b4d;margin:.35rem 0}
+.tracking-heading p{color:#68778b;margin:0;max-width:680px}
+.eyebrow{font-size:.68rem;letter-spacing:.12em;font-weight:800;color:#718096}
+.tracking-layout{display:grid;grid-template-columns:minmax(0,1.7fr) minmax(290px,.8fr);gap:1.2rem;align-items:start}
+.map-panel,.eta-card,.route-card,.driver-controls{background:#fff;border:1px solid #dfe5ec;border-radius:14px;box-shadow:0 8px 24px rgba(25,42,70,.06)}
+.map-panel{overflow:hidden}
+.map-topline{height:52px;padding:0 1rem;display:flex;align-items:center;justify-content:space-between;font-size:.72rem;font-weight:800;letter-spacing:.06em;color:#43536b}
+.map-topline>span:last-child{font-weight:600;letter-spacing:0;color:#718096}
+.live-dot{display:inline-block;width:8px;height:8px;background:#18a477;border-radius:50%;margin-right:.45rem;box-shadow:0 0 0 4px #e2f5ed}
+#trip-map{height:570px;width:100%;background:#e9eef3}
+.map-legend{display:flex;flex-wrap:wrap;gap:1.2rem;padding:.85rem 1rem;color:#68778b;font-size:.76rem}
+.map-legend span{display:flex;align-items:center;gap:.4rem}.legend-car{font-style:normal}.legend-dest{width:10px;height:10px;border:3px solid #e28a35;border-radius:50%}.legend-route{width:18px;height:4px;background:#315b91;border-radius:5px}
+.tracking-sidebar{display:grid;gap:1rem}
+.eta-card,.route-card,.driver-controls{padding:1.2rem}
+.eta-value{font-size:2.7rem;font-weight:800;letter-spacing:-.06em;color:#172b4d;line-height:1.25;margin:.3rem 0}
+.muted{font-size:.8rem;color:#718096}
+.eta-divider{height:1px;background:#e8edf2;margin:1rem 0}
+.metric-row{display:flex;justify-content:space-between;gap:.5rem;font-size:.78rem;color:#718096;padding:.3rem 0}
+.metric-row b{color:#27364b}
+.route-city{display:flex;align-items:center;gap:.8rem;margin:.9rem 0}
+.route-city div{display:grid}.route-city small{font-size:.62rem;letter-spacing:.09em;color:#8290a2;font-weight:800}.route-city b{font-size:.95rem;color:#24364d}
+.route-point{width:12px;height:12px;border:3px solid #315b91;border-radius:50%;flex:none}.route-point.finish{border-color:#e28a35}
+.route-line{height:18px;border-left:2px dashed #c7d1dd;margin-left:5px}
+.driver-controls p{font-size:.8rem;color:#68778b;margin:.65rem 0 1rem}
+.tracking-primary{background:#244a73!important;color:white!important;border-color:#244a73!important;width:100%}
+.driver-controls .btn-secondary{width:100%;margin-top:.5rem}
+.gps-status{font-size:.75rem;color:#718096;margin-top:.7rem}.gps-status.active{color:#13835f;font-weight:800}
+.privacy-note{font-size:.75rem;color:#718096;line-height:1.55;padding:.3rem .2rem}
+.tracking-alert{padding:.85rem 1rem;background:#edf2f7;border:1px solid #dfe5ec;border-radius:10px;color:#40516a;font-size:.84rem;margin-bottom:1rem}
+.tracking-alert.success{background:#eaf7f1;color:#176b4d;border-color:#ccebdd}.tracking-alert.warning{background:#fff7e8;color:#805b16;border-color:#f3dfb5}.tracking-alert.error{background:#fff0ef;color:#a13a35;border-color:#f3d1cf}
+.tracking-footnote{font-size:.75rem;color:#7a8798;margin-top:1rem}
+.car-marker-wrap{background:transparent;border:0}.car-marker{height:38px;width:38px;border-radius:50%;display:grid;place-items:center;background:#fff;border:2px solid #315b91;box-shadow:0 3px 12px #20354c55;font-size:20px}
+@media(max-width:850px){.tracking-layout{grid-template-columns:1fr}.tracking-sidebar{grid-template-columns:1fr 1fr}.privacy-note{grid-column:1/-1}#trip-map{height:440px}}
+@media(max-width:580px){.tracking-page{width:calc(100% - 1.2rem);margin:1.3rem auto 2rem}.tracking-heading{align-items:start;flex-direction:column}.tracking-sidebar{grid-template-columns:1fr}#trip-map{height:390px}.map-topline{font-size:.62rem}.map-legend{gap:.7rem;font-size:.68rem}}

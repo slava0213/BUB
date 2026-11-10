@@ -28,11 +28,11 @@ function renderTripCard(t, me) {
 
   let actions;
   if (isMine) {
-    actions = '<span class="tag demo">🚗 Ваша поездка</span><a class="btn btn-secondary btn-small" href="chat.html?trip=' + t.id + '">💬 Чат</a>';
+    actions = '<span class="tag demo">🚗 Ваша поездка</span><a class="btn btn-secondary btn-small" href="chat.html?trip=' + t.id + '">💬 Чат</a><a class="btn btn-small" href="tracking.html?trip=' + t.id + '">📍 GPS</a>';
   } else if (me) {
     actions =
       (seats > 0 ? '<button class="btn btn-small" onclick="sendRequest(' + t.id + ', this)">✋ Подать заявку</button>' : '') +
-      '<a class="btn btn-secondary btn-small" href="chat.html?trip=' + t.id + '">💬 Написать</a>';
+      '<a class="btn btn-secondary btn-small" href="chat.html?trip=' + t.id + '">💬 Написать</a>' + '<a class="btn btn-secondary btn-small" href="tracking.html?trip=' + t.id + '">📍 Где водитель?*</a>';
   } else {
     actions = '<a class="btn btn-small" href="login.html">Войти, чтобы поехать</a>';
   }

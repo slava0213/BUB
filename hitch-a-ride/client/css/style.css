@@ -466,12 +466,8 @@ form button[type=submit] { margin-top: 1.2rem; }
   .marquee { overflow-x: auto; }
 }
 
-/* ── Отслеживание водителя ── */
-.track-panel { background: #f4f1ff; border: 1px solid var(--line); border-radius: var(--r-sm); padding: .8rem 1rem; margin-bottom: .8rem; font-weight: 600; }
-.track-panel .track-title { font-weight: 800; margin-bottom: .3rem; }
-.track-panel .track-line { margin: .2rem 0; }
-.track-panel .track-muted { color: var(--muted); font-size: .85rem; }
-.track-panel .track-actions { display: flex; flex-wrap: wrap; gap: .5rem; margin-top: .6rem; }
-.track-panel .track-actions .btn, .track-panel .track-actions button { margin: 0; }
-.track-panel.arrived { background: #e6fbf6; border-color: #12c2a5; }
-.track-big { font-size: 1.4rem; font-weight: 800; }
+/* Небольшое визуальное упорядочивание: более спокойные поверхности и контраст */
+:root{--ink:#20334d;--text:#26364a;--muted:#69788b;--line:#e0e6ed;--bg:#f3f6f9;--violet:#315b91;--violet-dark:#244a73;--r:16px;--shadow:0 8px 24px rgba(25,42,70,.07)}
+body{background:linear-gradient(180deg,#f7f9fb 0%,#eef2f6 100%)}
+.site-header{background:rgba(255,255,255,.94);border-bottom-color:#dfe5ec}
+.btn{box-shadow:none}

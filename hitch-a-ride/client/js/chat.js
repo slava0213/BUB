@@ -90,7 +90,6 @@ async function openChat(tripId) {
       '<small>Водитель: ' + esc(trip.driver) + ' · ' + fmtDate(trip.date) + ' в ' + esc(trip.time) + '</small>' +
       '<div id="online-status" class="online-status"></div>';
   }
-  if (trip && window.Tracking) Tracking.open(tripId, trip.driver_id === CURRENT_USER.id);
   await loadMessages(tripId);
   await checkOnline(tripId);
 }

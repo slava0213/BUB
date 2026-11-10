@@ -7,6 +7,7 @@
     ['home',    'index.html',        '🚗 Поездки'],
     ['create',  'create-trip.html',  '➕ Создать'],
     ['search',  'search.html',       '🔍 Поиск'],
+    ['tracking','tracking.html',     '📍 Геолокация'],
     ['chat',    'chat.html',         '💬 Чат'],
     ['profile', 'profile.html',      '👤 Профиль']
   ];
