@@ -1,14 +1,14 @@
 // client/js/trips.js — карточки поездок (главная + поиск)
 
 const CITY_ICONS = [
-  ['москв', '🏛️'], ['петербург', '🌉'], ['спб', '🌉'], ['казан', '🕌'], ['екатеринбург', '🏔️'],
-  ['новосибирск', '🌲'], ['сочи', '🏖️'], ['краснодар', '🌻'], ['нижн', '⛪'], ['уф', '🎶'],
-  ['челябинск', '🏭'], ['томск', '🎓']
+  ['москв', ''], ['петербург', ''], ['спб', ''], ['казан', ''], ['екатеринбург', ''],
+  ['новосибирск', ''], ['сочи', ''], ['краснодар', ''], ['нижн', ''], ['уф', ''],
+  ['челябинск', ''], ['томск', '']
 ];
 function cityIcon(name) {
   const n = String(name || '').toLowerCase();
   for (let i = 0; i < CITY_ICONS.length; i++) if (n.indexOf(CITY_ICONS[i][0]) !== -1) return CITY_ICONS[i][1];
-  return '📍';
+  return '';
 }
 
 const ACCENTS = ['#6c3df4', '#ff4f8b', '#12c2a5', '#ff7a45', '#38b6ff'];
@@ -23,16 +23,22 @@ function renderTripCard(t, me) {
   const accent = ACCENTS[Math.abs(Number(t.id) || 0) % ACCENTS.length];
   const seats = Number(t.seats);
   const seatsTag = seats > 0
-    ? '<span class="tag ' + (seats <= 1 ? 'warn' : 'good') + '">💺 Мест: ' + seats + '</span>'
-    : '<span class="tag bad">💺 Мест нет</span>';
+    ? '<span class="tag ' + (seats <= 1 ? 'warn' : 'good') + '">Мест: ' + seats + '</span>'
+    : '<span class="tag bad">Мест нет</span>';
 
   let actions;
   if (isMine) {
-    actions = '<span class="tag demo">🚗 Ваша поездка</span><a class="btn btn-secondary btn-small" href="chat.html?trip=' + t.id + '">💬 Чат</a><a class="btn btn-small" href="tracking.html?trip=' + t.id + '">📍 GPS</a>';
+    actions = '<span class="tag demo">Ваша поездка</span>' +
+      (t.status !== 'finished' ? '<a class="btn btn-small" href="track.html?trip=' + t.id + '">Карта и старт</a>' : '') +
+      '<a class="btn btn-secondary btn-small" href="chat.html?trip=' + t.id + '">Чат</a>';
+  } else if (me && t.my_request === 'принята') {
+    actions =
+      '<a class="btn btn-small" href="track.html?trip=' + t.id + '">Где водитель</a>' +
+      '<a class="btn btn-secondary btn-small" href="chat.html?trip=' + t.id + '">Написать</a>';
   } else if (me) {
     actions =
-      (seats > 0 ? '<button class="btn btn-small" onclick="sendRequest(' + t.id + ', this)">✋ Подать заявку</button>' : '') +
-      '<a class="btn btn-secondary btn-small" href="chat.html?trip=' + t.id + '">💬 Написать</a>' + '<a class="btn btn-secondary btn-small" href="tracking.html?trip=' + t.id + '">📍 Где водитель?*</a>';
+      (seats > 0 && !t.my_request ? '<button class="btn btn-small" onclick="sendRequest(' + t.id + ', this)">Подать заявку</button>' : '') +
+      '<a class="btn btn-secondary btn-small" href="chat.html?trip=' + t.id + '">Написать</a>';
   } else {
     actions = '<a class="btn btn-small" href="login.html">Войти, чтобы поехать</a>';
   }
@@ -47,15 +53,17 @@ function renderTripCard(t, me) {
       '<div class="trip-price">' + fmtPrice(t.price) + '</div>' +
     '</div>' +
     '<div class="trip-meta">' +
-      '<span class="tag">📅 ' + fmtDate(t.date) + '</span>' +
-      '<span class="tag">🕒 ' + esc(t.time) + '</span>' +
+      '<span class="tag">' + fmtDate(t.date) + '</span>' +
+      '<span class="tag">' + esc(t.time) + '</span>' +
       seatsTag +
+      (t.status === 'active' ? '<span class="tag live">В пути</span>' : '') +
+      (t.status === 'finished' ? '<span class="tag">Завершена</span>' : '') +
       (t.demo ? '<span class="tag demo">демо</span>' : '') +
     '</div>' +
-    (t.description ? '<p class="trip-desc">📝 ' + esc(t.description) + '</p>' : '') +
+    (t.description ? '<p class="trip-desc">' + esc(t.description) + '</p>' : '') +
     '<div class="trip-bottom">' +
       '<div class="driver">' + avatar(t.driver, t.driver_id) +
-        '<span>' + esc(t.driver) + '<small>' + (t.driver_rating ? '⭐ ' + Number(t.driver_rating).toFixed(1) : 'Новый водитель') + '</small></span></div>' +
+        '<span>' + esc(t.driver) + '<small>' + (t.driver_rating ? '' + Number(t.driver_rating).toFixed(1) : 'Новый водитель') + '</small></span></div>' +
       actions +
     '</div>' +
   '</article>';
@@ -68,12 +76,12 @@ async function loadTrips() {
     const results = await Promise.all([Api.get('/trips'), getCurrentUser()]);
     const trips = results[0], me = results[1];
     if (!trips.length) {
-      container.innerHTML = emptyBlock('🛣️', 'Пока нет ни одной поездки.', 'create-trip.html', 'Создать первую');
+      container.innerHTML = emptyBlock('', 'Пока нет ни одной поездки.', 'create-trip.html', 'Создать первую');
       return;
     }
     container.innerHTML = trips.map(function (t) { return renderTripCard(t, me); }).join('');
   } catch (e) {
-    container.innerHTML = emptyBlock('⚠️', 'Ошибка: ' + esc(e.message));
+    container.innerHTML = emptyBlock('', 'Ошибка: ' + esc(e.message));
   }
 }
 
@@ -82,7 +90,7 @@ async function sendRequest(tripId, btn) {
     if (btn) btn.disabled = true;
     await Api.post('/trips/' + tripId + '/requests');
     toast('Заявка отправлена! Водитель увидит её в профиле.', 'ok');
-    if (btn) { btn.textContent = '✔ Заявка отправлена'; }
+    if (btn) { btn.textContent = 'Заявка отправлена'; }
   } catch (e) {
     if (btn) btn.disabled = false;
     toast(e.message, 'error');

@@ -60,17 +60,17 @@ async function renderChatList() {
     const mine = TRIPS_CACHE.filter(function (t) { return t.driver_id === CURRENT_USER.id || requested.has(t.id); });
 
     if (!mine.length) {
-      container.innerHTML = emptyBlock('💬', 'Чатов пока нет. Подайте заявку на поездку — и здесь появится переписка.', 'search.html', 'Найти поездку');
+      container.innerHTML = emptyBlock('', 'Чатов пока нет. Подайте заявку на поездку — и здесь появится переписка.', 'search.html', 'Найти поездку');
       return;
     }
     container.innerHTML = mine.map(function (t) {
       const isDriver = t.driver_id === CURRENT_USER.id;
       return '<div class="chat-item" data-trip="' + t.id + '" onclick="openChat(' + t.id + ')">' +
         '<div class="chat-item-title">' + esc(t.from_city) + ' → ' + esc(t.to_city) + '</div>' +
-        '<div class="chat-item-sub">' + fmtDate(t.date) + ' · ' + (isDriver ? '🚗 Вы водитель' : '✋ Вы пассажир') + '</div></div>';
+        '<div class="chat-item-sub">' + fmtDate(t.date) + ' · ' + (isDriver ? 'Вы водитель' : 'Вы пассажир') + '</div></div>';
     }).join('');
   } catch (e) {
-    container.innerHTML = emptyBlock('⚠️', 'Ошибка: ' + esc(e.message));
+    container.innerHTML = emptyBlock('', 'Ошибка: ' + esc(e.message));
   }
 }
 
@@ -88,7 +88,8 @@ async function openChat(tripId) {
     document.getElementById('chat-header').innerHTML =
       '<h3>' + esc(trip.from_city) + ' → ' + esc(trip.to_city) + '</h3>' +
       '<small>Водитель: ' + esc(trip.driver) + ' · ' + fmtDate(trip.date) + ' в ' + esc(trip.time) + '</small>' +
-      '<div id="online-status" class="online-status"></div>';
+      '<div id="online-status" class="online-status"></div>' +
+      '<a class="btn btn-secondary btn-small" style="margin-top:.6rem" href="track.html?trip=' + tripId + '">Карта и время прибытия</a>';
   }
   await loadMessages(tripId);
   await checkOnline(tripId);
@@ -105,7 +106,7 @@ async function loadMessages(tripId) {
     LAST_MESSAGE_KEY = key;
 
     if (!messages.length) {
-      box.innerHTML = emptyBlock('👋', 'Сообщений пока нет. Напишите первым!');
+      box.innerHTML = emptyBlock('', 'Сообщений пока нет. Напишите первым!');
       return;
     }
 
@@ -125,7 +126,7 @@ async function loadMessages(tripId) {
     box.innerHTML = html;
     box.scrollTop = box.scrollHeight;
   } catch (e) {
-    box.innerHTML = emptyBlock('🔒', esc(e.message));
+    box.innerHTML = emptyBlock('', esc(e.message));
   }
 }
 

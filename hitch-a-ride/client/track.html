@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Где водитель — Попутчики</title>
+  <link rel="icon" type="image/svg+xml" href="images/favicon.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body data-page="track">
+  <main>
+    <div class="page-title">
+      <h1 id="t-title">Положение водителя</h1>
+      <p id="t-sub">Загрузка…</p>
+    </div>
+
+    <div id="t-banner" class="banner" style="display:none"></div>
+
+    <div class="track-layout">
+      <section class="map-wrap">
+        <div id="map" role="application" aria-label="Карта маршрута"></div>
+        <div class="map-tools">
+          <label class="check"><input type="checkbox" id="follow" checked /> Следить за водителем</label>
+          <button type="button" class="btn btn-secondary btn-small" id="fit-btn">Показать весь маршрут</button>
+        </div>
+      </section>
+
+      <aside class="track-panel">
+        <div class="panel" id="eta-card">
+          <div id="status-chip" class="status-chip">—</div>
+          <div class="eta-main" id="eta-main">—</div>
+          <div class="eta-sub" id="eta-sub"></div>
+          <div class="progress" id="progress" style="display:none" aria-hidden="true"><div class="progress-bar" id="progress-bar"></div></div>
+          <dl class="kv" id="kv"></dl>
+        </div>
+
+        <div class="panel" id="pickup-card" style="display:none">
+          <h2>Моя точка посадки</h2>
+          <div id="pickup-info" class="muted"></div>
+          <div class="btn-row">
+            <button type="button" class="btn btn-secondary btn-small" id="pick-map">Выбрать на карте</button>
+            <button type="button" class="btn btn-secondary btn-small" id="pick-gps">По моей геопозиции</button>
+            <button type="button" class="btn btn-secondary btn-small" id="pick-clear" style="display:none">Убрать</button>
+          </div>
+          <div id="pickup-eta" class="pickup-eta"></div>
+        </div>
+
+        <div class="panel" id="driver-card" style="display:none">
+          <h2>Управление поездкой</h2>
+          <p class="muted" id="driver-hint"></p>
+          <div class="btn-row">
+            <button type="button" class="btn btn-small" id="start-btn">Начать поездку</button>
+            <button type="button" class="btn btn-secondary btn-small" id="finish-btn" style="display:none">Завершить</button>
+          </div>
+          <div id="sim-box" style="display:none">
+            <label for="sim-speed">Демонстрация без выезда</label>
+            <div class="btn-row">
+              <select id="sim-speed" aria-label="Скорость симуляции">
+                <option value="30">Симуляция ×30</option>
+                <option value="60" selected>Симуляция ×60</option>
+                <option value="120">Симуляция ×120</option>
+              </select>
+              <button type="button" class="btn btn-secondary btn-small" id="sim-btn">Запустить</button>
+            </div>
+            <p class="muted small">Водитель «едет» по маршруту с ускорением. Пассажиры видят пометку «симуляция».</p>
+          </div>
+          <div id="gps-state" class="muted small"></div>
+          <div id="passengers"></div>
+        </div>
+
+        <p class="muted small">Время рассчитывается по дорожной сети без учёта пробок. Геопозиция передаётся только во время активной поездки и видна водителю и принятым пассажирам.</p>
+      </aside>
+    </div>
+  </main>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+          integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+  <script src="js/config.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/layout.js"></script>
+  <script src="js/track.js"></script>
+</body>
+</html>

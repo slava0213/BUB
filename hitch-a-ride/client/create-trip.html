@@ -7,7 +7,7 @@
   <link rel="icon" type="image/svg+xml" href="images/favicon.svg" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;700;800&family=Unbounded:wght@600;800&display=swap&subset=cyrillic" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="css/style.css" />
 </head>
 <body data-page="create">
@@ -37,7 +37,7 @@
         <label for="description">Описание</label>
         <textarea id="description" rows="3" maxlength="500" placeholder="Где встретимся, сколько багажа, можно ли с животными..."></textarea>
 
-        <button type="submit" class="btn-large">🚀 Опубликовать</button>
+        <button type="submit" class="btn-large">Опубликовать</button>
       </form>
 
       <div class="stack">
@@ -91,12 +91,17 @@
         const errBox = $('error');
         errBox.style.display = 'none';
         try {
-          await Api.post('/trips', {
+          const created = await Api.post('/trips', {
             from_city: $('from_city').value.trim(), to_city: $('to_city').value.trim(),
             date: $('date').value, time: $('time').value,
             seats: Number($('seats').value), price: Number($('price').value),
             description: $('description').value.trim()
           });
+          if (created.tracking === false) {
+            toast('Поездка создана, но координаты городов не определены — карта будет недоступна. Проверьте названия.', 'error');
+            setTimeout(function () { location.href = 'index.html'; }, 2500);
+            return;
+          }
           location.href = 'index.html';
         } catch (err) {
           errBox.textContent = err.message;

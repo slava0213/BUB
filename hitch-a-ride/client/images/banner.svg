@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 190" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#cfe3f2"/><stop offset="1" stop-color="#f6f9fc"/></linearGradient>
+    <linearGradient id="glass" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#9db4c8"/><stop offset="1" stop-color="#6d879f"/></linearGradient>
+    <linearGradient id="road" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#6b6f75"/><stop offset="1" stop-color="#3d4045"/></linearGradient>
+  </defs>
+  <rect width="1200" height="190" fill="url(#sky)"/>
+  <!-- левое здание -->
+  <path d="M0 150V62q120-46 300-30l60 14v104z" fill="#8795a3"/>
+  <path d="M0 150V78q120-40 300-24l60 12v84z" fill="#b6c2ce"/>
+  <g stroke="#7c8b99" stroke-width="2" opacity=".7"><path d="M40 150V82M90 150V70M140 150V62M190 150V58M240 150V56M290 150V58"/></g>
+  <!-- центральная башня -->
+  <rect x="470" y="36" width="70" height="114" fill="url(#glass)"/>
+  <rect x="548" y="60" width="54" height="90" fill="#8aa0b4"/>
+  <g stroke="#e8f0f7" stroke-width="1.5" opacity=".6"><path d="M470 62h70M470 88h70M470 114h70M548 84h54M548 108h54"/></g>
+  <!-- правый квартал -->
+  <rect x="820" y="40" width="80" height="110" fill="url(#glass)"/>
+  <rect x="908" y="70" width="64" height="80" fill="#7d93a8"/>
+  <rect x="982" y="28" width="96" height="122" fill="url(#glass)"/>
+  <rect x="1086" y="58" width="114" height="92" fill="#8aa0b4"/>
+  <g stroke="#e8f0f7" stroke-width="1.5" opacity=".55"><path d="M820 70h80M820 100h80M982 56h96M982 86h96M982 116h96M1086 84h114M1086 112h114"/></g>
+  <!-- дорога -->
+  <rect y="150" width="1200" height="40" fill="url(#road)"/>
+  <path d="M0 172h1200" stroke="#f5c400" stroke-width="3" stroke-dasharray="40 30"/>
+  <!-- такси -->
+  <g transform="translate(560 108)">
+    <ellipse cx="120" cy="64" rx="112" ry="7" fill="#000" opacity=".25"/>
+    <path d="M12 52q-4-18 12-24l34-8 24-18q8-6 20-6h46q14 0 22 10l18 18 24 4q12 4 12 20v10q0 6-6 6H18q-6 0-6-6z" fill="#fbc512" stroke="#c99700" stroke-width="2"/>
+    <path d="M86 20l18-14h42v28H70zM156 6h24q8 0 14 8l12 20h-50z" fill="#dfeaf3" stroke="#8c9aa7" stroke-width="1.5"/>
+    <rect x="108" y="-6" width="38" height="12" rx="2" fill="#2b2b2b"/><text x="127" y="3.5" font-size="8" font-weight="700" text-anchor="middle" fill="#fbc512" font-family="Arial">TAXI</text>
+    <g fill="#2b2b2b"><circle cx="62" cy="58" r="14"/><circle cx="188" cy="58" r="14"/></g>
+    <g fill="#bfc5cc"><circle cx="62" cy="58" r="6"/><circle cx="188" cy="58" r="6"/></g>
+    <path d="M12 44h14M232 46h12" stroke="#fff" stroke-width="5" stroke-linecap="round" opacity=".8"/>
+  </g>
+  <!-- вывеска -->
+  <g transform="translate(618 74)"><rect width="120" height="26" rx="5" fill="#fbc512" stroke="#2b2b2b" stroke-width="2"/><text x="60" y="18" text-anchor="middle" font-size="13" font-weight="700" fill="#2b2b2b" font-family="Arial">Едем вместе</text></g>
+</svg>

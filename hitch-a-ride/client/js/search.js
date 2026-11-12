@@ -15,7 +15,7 @@ function drawResults() {
   document.getElementById('count').textContent = 'Найдено: ' + FOUND.length;
   container.innerHTML = sorted.length
     ? sorted.map(function (t) { return renderTripCard(t, ME); }).join('')
-    : emptyBlock('🔎', 'По вашему запросу ничего не найдено. Попробуйте другой город или дату.', 'create-trip.html', 'Предложить свою поездку');
+    : emptyBlock('', 'По вашему запросу ничего не найдено. Попробуйте другой город или дату.', 'create-trip.html', 'Предложить свою поездку');
 }
 
 async function runSearch() {
@@ -30,13 +30,13 @@ async function runSearch() {
   history.replaceState(null, '', params.toString() ? '?' + params.toString() : location.pathname);
 
   const container = document.getElementById('search-results');
-  container.innerHTML = emptyBlock('⏳', 'Ищем попутчиков...');
+  container.innerHTML = emptyBlock('', 'Ищем попутчиков...');
   try {
     const res = await Promise.all([Api.get('/trips?' + params.toString()), getCurrentUser()]);
     FOUND = res[0]; ME = res[1];
     drawResults();
   } catch (e) {
-    container.innerHTML = emptyBlock('⚠️', 'Ошибка: ' + esc(e.message));
+    container.innerHTML = emptyBlock('', 'Ошибка: ' + esc(e.message));
   }
 }
 

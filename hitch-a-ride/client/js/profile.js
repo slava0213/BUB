@@ -50,15 +50,17 @@ async function loadMyTrips() {
   try {
     const trips = (await Api.get('/trips?all=1')).filter(function (t) { return t.driver_id === CURRENT_USER.id; });
     if (!trips.length) {
-      box.innerHTML = emptyBlock('🚗', 'Вы ещё не создавали поездок.', 'create-trip.html', 'Создать поездку');
+      box.innerHTML = emptyBlock('', 'Вы ещё не создавали поездок.', 'create-trip.html', 'Создать поездку');
       return;
     }
     box.innerHTML = '<div class="stack">' + trips.map(function (t) {
       return '<div class="mini-card"><h4>' + cityIcon(t.from_city) + ' ' + esc(t.from_city) + ' → ' + cityIcon(t.to_city) + ' ' + esc(t.to_city) + '</h4>' +
-        '<p>📅 ' + fmtDate(t.date) + ' в ' + esc(t.time) + ' · 💺 ' + t.seats + ' · 💰 ' + fmtPrice(t.price) + '</p>' +
-        '<div class="mini-actions"><a class="btn btn-secondary btn-small" href="chat.html?trip=' + t.id + '">💬 Чат</a></div></div>';
+        '<p>' + fmtDate(t.date) + ' в ' + esc(t.time) + ' · ' + t.seats + ' · ' + fmtPrice(t.price) + '</p>' +
+        '<div class="mini-actions">' +
+        (t.status !== 'finished' ? '<a class="btn btn-small" href="track.html?trip=' + t.id + '">Карта</a>' : '') +
+        '<a class="btn btn-secondary btn-small" href="chat.html?trip=' + t.id + '">Чат</a></div></div>';
     }).join('') + '</div>';
-  } catch (e) { box.innerHTML = emptyBlock('⚠️', esc(e.message)); }
+  } catch (e) { box.innerHTML = emptyBlock('', esc(e.message)); }
 }
 
 async function loadIncomingRequests() {
@@ -66,23 +68,24 @@ async function loadIncomingRequests() {
   try {
     const reqs = await Api.get('/me/incoming-requests');
     if (!reqs.length) {
-      box.innerHTML = emptyBlock('📭', 'Пока никто не оставил заявок на ваши поездки.');
+      box.innerHTML = emptyBlock('', 'Пока никто не оставил заявок на ваши поездки.');
       return;
     }
     box.innerHTML = '<div class="stack">' + reqs.map(function (r) {
       const decide = r.status === 'ожидает'
-        ? '<button class="btn btn-small" onclick="decide(' + r.id + ',\'accept\')">✅ Принять</button>' +
-          '<button class="btn btn-secondary btn-small" onclick="decide(' + r.id + ',\'reject\')">❌ Отклонить</button>'
+        ? '<button class="btn btn-small" onclick="decide(' + r.id + ',\'accept\')">Принять</button>' +
+          '<button class="btn btn-secondary btn-small" onclick="decide(' + r.id + ',\'reject\')">Отклонить</button>'
         : (r.status === 'принята'
             ? '<button class="btn btn-secondary btn-small" onclick="decide(' + r.id + ',\'reject\')">Отменить участие</button>' : '');
       return '<div class="mini-card"><h4>' + esc(r.from_city) + ' → ' + esc(r.to_city) + '</h4>' +
-        '<p>📅 ' + fmtDate(r.date) + ' в ' + esc(r.time) + '</p>' +
-        '<p>👤 ' + esc(r.passenger_name) + ' · ' + esc(r.passenger_phone || r.passenger_email || '—') + '</p>' +
+        '<p>' + fmtDate(r.date) + ' в ' + esc(r.time) + '</p>' +
+        '<p>' + esc(r.passenger_name) + ' · ' + esc(r.passenger_phone || r.passenger_email || '—') + '</p>' +
         '<p>' + statusBadge(r.status) + '</p>' +
         '<div class="mini-actions">' + decide +
-        '<a class="btn btn-secondary btn-small" href="chat.html?trip=' + r.trip_id + '">💬 Написать</a></div></div>';
+        (r.status === 'принята' ? '<a class="btn btn-small" href="track.html?trip=' + r.trip_id + '">Карта</a>' : '') +
+        '<a class="btn btn-secondary btn-small" href="chat.html?trip=' + r.trip_id + '">Написать</a></div></div>';
     }).join('') + '</div>';
-  } catch (e) { box.innerHTML = emptyBlock('⚠️', esc(e.message)); }
+  } catch (e) { box.innerHTML = emptyBlock('', esc(e.message)); }
 }
 
 async function decide(id, action) {
@@ -100,23 +103,25 @@ async function loadMyRequests() {
     const res = await Promise.all([Api.get('/me/requests'), Api.get('/me/reviews').catch(function () { return []; })]);
     const reqs = res[0], reviews = res[1];
     if (!reqs.length) {
-      box.innerHTML = emptyBlock('✋', 'У вас пока нет заявок.', 'search.html', 'Найти поездку');
+      box.innerHTML = emptyBlock('', 'У вас пока нет заявок.', 'search.html', 'Найти поездку');
       return;
     }
     box.innerHTML = '<div class="stack">' + reqs.map(function (r) {
       const reviewed = reviews.some(function (rv) { return rv.driver_id === r.driver_id; });
       let review = '';
       if (r.status === 'принята' && !reviewed) {
-        review = '<button class="btn btn-small" data-id="' + r.driver_id + '" data-name="' + esc(r.driver) + '" onclick="openReviewModal(this.dataset.id, this.dataset.name)">⭐ Оставить отзыв</button>';
+        review = '<button class="btn btn-small" data-id="' + r.driver_id + '" data-name="' + esc(r.driver) + '" onclick="openReviewModal(this.dataset.id, this.dataset.name)">Оставить отзыв</button>';
       } else if (reviewed) {
-        review = '<span class="tag good">⭐ Отзыв оставлен</span>';
+        review = '<span class="tag good">Отзыв оставлен</span>';
       }
       return '<div class="mini-card"><h4>' + esc(r.from_city) + ' → ' + esc(r.to_city) + '</h4>' +
-        '<p>📅 ' + fmtDate(r.date) + ' в ' + esc(r.time) + ' · 💰 ' + fmtPrice(r.price || 0) + '</p>' +
-        '<p>🚗 ' + esc(r.driver) + '</p><p>' + statusBadge(r.status) + '</p>' +
-        '<div class="mini-actions"><a class="btn btn-secondary btn-small" href="chat.html?trip=' + r.trip_id + '">💬 Написать</a>' + review + '</div></div>';
+        '<p>' + fmtDate(r.date) + ' в ' + esc(r.time) + ' · ' + fmtPrice(r.price || 0) + '</p>' +
+        '<p>' + esc(r.driver) + '</p><p>' + statusBadge(r.status) + '</p>' +
+        '<div class="mini-actions">' +
+        (r.status === 'принята' ? '<a class="btn btn-small" href="track.html?trip=' + r.trip_id + '">Где водитель</a>' : '') +
+        '<a class="btn btn-secondary btn-small" href="chat.html?trip=' + r.trip_id + '">Написать</a>' + review + '</div></div>';
     }).join('') + '</div>';
-  } catch (e) { box.innerHTML = emptyBlock('⚠️', esc(e.message)); }
+  } catch (e) { box.innerHTML = emptyBlock('', esc(e.message)); }
 }
 
 async function loadReviews() {
@@ -124,14 +129,14 @@ async function loadReviews() {
   try {
     const reviews = await Api.get('/users/' + CURRENT_USER.id + '/reviews');
     if (!reviews.length) {
-      box.innerHTML = emptyBlock('⭐', 'Отзывов о вас пока нет. Они появятся после совместных поездок.');
+      box.innerHTML = emptyBlock('', 'Отзывов о вас пока нет. Они появятся после совместных поездок.');
       return;
     }
     box.innerHTML = '<div class="stack">' + reviews.map(function (r) {
       return '<div class="mini-card"><p><span class="stars-line">' + stars(r.rating) + '</span> от <b>' + esc(r.author) + '</b></p>' +
         (r.text ? '<p>' + esc(r.text) + '</p>' : '') + '</div>';
     }).join('') + '</div>';
-  } catch (e) { box.innerHTML = emptyBlock('⚠️', esc(e.message)); }
+  } catch (e) { box.innerHTML = emptyBlock('', esc(e.message)); }
 }
 
 /* ── Отзыв ── */

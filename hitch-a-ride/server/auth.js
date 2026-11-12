@@ -23,4 +23,11 @@ function auth(req, res, next) {
   }
 }
 
-module.exports = { sign, auth };
+// Необязательная авторизация: возвращает пользователя из cookie или null.
+function optional(req) {
+  const token = req.cookies && req.cookies.token;
+  if (!token) return null;
+  try { return jwt.verify(token, SECRET); } catch (e) { return null; }
+}
+
+module.exports = { sign, auth, optional };
