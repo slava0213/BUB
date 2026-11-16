@@ -32,11 +32,11 @@
     const d = new Date(value);
     return isNaN(d) ? '' : d.toLocaleString('ru-RU', {day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'});
   }
-  function ticketCard(ticket, key) {
+  function ticketCard(ticket, key, isAdmin) {
     return '<button type="button" class="support-ticket-row" data-ticket="' + Number(ticket.id) +
       '" data-key="' + esc(key || '') + '"><span class="support-ticket-number">#' + Number(ticket.id) +
       '</span><span class="support-ticket-main"><b>' + esc(ticket.subject) + '</b><small>' +
-      esc(ticket.category) + ' · ' + dateText(ticket.updated_at || ticket.created_at) +
+      (isAdmin ? esc(ticket.name) + ' · ' + esc(ticket.email) + ' · ' : '') + esc(ticket.category) + ' · ' + dateText(ticket.updated_at || ticket.created_at) +
       '</small></span><span class="support-status ' + statusClass(ticket.status) + '">' +
       esc(ticket.status) + '</span><span class="support-ticket-arrow">›</span></button>';
   }
@@ -60,7 +60,7 @@
     }
     list.innerHTML = items.length
       ? (admin ? '<div class="support-admin-note">Режим администратора · все обращения пользователей</div>' : '') +
-        items.map(t => ticketCard(t, t._key || '')).join('')
+        Array.from(new Map(items.map(t => [Number(t.id), t])).values()).map(t => ticketCard(t, t._key || '', admin)).join('')
       : '<div class="support-empty"><b>Здесь пока пусто</b><span>Отправьте первое обращение — оно появится в этом списке.</span></div>';
   }
 
