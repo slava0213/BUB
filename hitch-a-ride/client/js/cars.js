@@ -1,7 +1,7 @@
 // Автопарк BUB: прямые файлы Wikimedia Commons для моделей и поиск конкретного фото,
 // если для модели не закреплён отдельный файл. Заглушки не используются.
 (function () {
-  var GROUPS = [{"title":"Эконом","text":"Популярные и неприхотливые автомобили для повседневных поездок.","cars":[["LADA Granta","Lada Granta1.jpg"],["LADA Vesta","2015 Lada Vesta GFL120 grey front.jpg"],["Kia Rio","Moscow, Kia Rio white, Sept 2025 01.jpg"],["Hyundai Solaris","2021 Hyundai Solaris white front.jpg"],["Volkswagen Polo","VW-Polo.jpg"],["Renault Logan","Renault Logan.jpg"]]},{"title":"Комфорт","text":"Просторные седаны и лифтбеки для поездок между городами.","cars":[["Skoda Rapid","ŠKODA Rapid.jpg"],["Skoda Octavia","Skoda-Octavia.jpg"],["Toyota Corolla","Toyota Corolla.jpg"],["Kia Cerato","Kia Cerato (II, Facelift) – f 10012026.jpg"],["Hyundai Elantra",null]]},{"title":"Бизнес","text":"Автомобили с просторным салоном для более комфортных маршрутов.","cars":[["Toyota Camry","2021 Toyota Camry GR Sport front.jpg"],["Kia K5","Kia K5.JPG"],["Skoda Superb","SkodaSuperb.jpg"],["Mercedes-Benz E-Class","Mercedes Benz E Class.jpg"]]},{"title":"Кроссоверы","text":"Больше пространства для пассажиров и багажа.","cars":[["Haval Jolion","Haval Jolion 001.jpg"],["Geely Coolray","Coolray Front.jpg"],["Chery Tiggo 7","2024 Chery Tiggo 7 front view.png"],["Kia Sportage","KIA-Sportage.jpg"],["Hyundai Tucson","Hyundai-Tucson.jpg"]]}];
+  var GROUPS = [{"title":"Эконом","text":"Популярные и неприхотливые автомобили для повседневных поездок.","cars":[["LADA Granta","Lada Granta1.jpg"],["LADA Vesta","2015 Lada Vesta GFL120 grey front.jpg"],["Kia Rio","Moscow, Kia Rio white, Sept 2025 01.jpg"],["Hyundai Solaris","2021 Hyundai Solaris white front.jpg"],["Volkswagen Polo","VW-Polo.jpg"],["Renault Logan","Renault Logan.jpg"]]},{"title":"Комфорт","text":"Просторные седаны и лифтбеки для поездок между городами.","cars":[["Skoda Rapid","ŠKODA Rapid.jpg"],["Skoda Octavia","Skoda-Octavia.jpg"],["Toyota Corolla","Toyota Corolla.jpg"],["Kia Cerato","Kia Cerato (II, Facelift) – f 10012026.jpg"],["Hyundai Elantra",null,"Hyundai","Elantra"]]},{"title":"Бизнес","text":"Автомобили с просторным салоном для более комфортных маршрутов.","cars":[["Toyota Camry","2021 Toyota Camry GR Sport front.jpg"],["Kia K5","Kia K5.JPG"],["Skoda Superb","SkodaSuperb.jpg"],["Mercedes-Benz E-Class","Mercedes Benz E Class.jpg"]]},{"title":"Кроссоверы","text":"Больше пространства для пассажиров и багажа.","cars":[["Haval Jolion","Haval Jolion 001.jpg"],["Geely Coolray","Coolray Front.jpg"],["Chery Tiggo 7","2024 Chery Tiggo 7 front view.png"],["Kia Sportage","KIA-Sportage.jpg"],["Hyundai Tucson","Hyundai-Tucson.jpg"]]}];
   function directFileUrl(filename) {
     return 'https://commons.wikimedia.org/wiki/Special:FilePath/' + encodeURIComponent(filename) + '?width=1000';
   }
@@ -22,6 +22,17 @@
   }
   function loadCarImage(img, car) {
     if (car[1]) {
+      img.onerror = function () {
+        if (img.dataset.commonsRetry === '1') return;
+        img.dataset.commonsRetry = '1';
+        fetch(commonsSearchUrl(car[2] || car[0].split(' ')[0], car[3] || car[0].split(' ').slice(1).join(' ')))
+          .then(function (r) { if (!r.ok) throw new Error('Commons search failed'); return r.json(); })
+          .then(function (data) {
+            var url = bestImageUrl(data, car[2] || car[0].split(' ')[0], car[3] || car[0].split(' ').slice(1).join(' '));
+            if (url) { img.onerror = null; img.src = url; }
+          })
+          .catch(function (error) { console.warn('Не удалось загрузить фото ' + car[0], error); });
+      };
       img.src = directFileUrl(car[1]);
       return;
     }
