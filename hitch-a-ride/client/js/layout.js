@@ -9,14 +9,16 @@
     create:  '<circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/>',
     search:  '<circle cx="11" cy="11" r="6.5"/><path d="M16 16l5 5"/>',
     chat:    '<path d="M4 5h16v11H10l-5 4v-4H4z"/><path d="M8 9h8M8 12h5"/>',
-    profile: '<circle cx="12" cy="8" r="4"/><path d="M4 20c1-4 4-6 8-6s7 2 8 6"/>'
+    profile: '<circle cx="12" cy="8" r="4"/><path d="M4 20c1-4 4-6 8-6s7 2 8 6"/>',
+    support: '<circle cx="12" cy="12" r="9"/><path d="M9.5 9a2.5 2.5 0 1 1 4.2 1.8c-1.1 1-1.7 1.4-1.7 3.2M12 17.5h.01"/>'
   };
   const links = [
     ['home',    'index.html',        'Поездки'],
     ['create',  'create-trip.html',  'Создать поездку'],
     ['search',  'search.html',       'Поиск'],
     ['chat',    'chat.html',         'Чат'],
-    ['profile', 'profile.html',      'Профиль']
+    ['profile', 'profile.html',      'Профиль'],
+    ['support', 'support.html',      'Поддержка']
   ];
   // страницы, где показываем левую колонку
   const WITH_SIDEBAR = ['home', 'create', 'search', 'profile'];
