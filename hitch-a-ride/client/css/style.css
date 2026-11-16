@@ -435,7 +435,7 @@ main.wide { max-width: 1200px; }
   .shell { grid-template-columns: minmax(260px, 310px) minmax(0, 1fr); gap: clamp(1.5rem, 2.5vw, 2.8rem); }
   .side { position: sticky; top: 1rem; }
 }
-.photo-scene { min-height: 370px; justify-content: flex-end; padding: 2rem; background: #26343b url('https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=1800&q=90') center 55% / cover no-repeat; }
+.photo-scene { min-height: 370px; justify-content: flex-end; padding: 2rem; background: #26343b url('../images/hero-road.svg') center 55% / cover no-repeat; }
 .photo-scene::before { display: none; }
 .photo-scene-shade { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(8,15,22,.02) 15%, rgba(8,15,22,.78) 100%); }
 .scene-overlay { display: grid; gap: .55rem; max-width: 560px; text-shadow: 0 2px 12px rgba(0,0,0,.3); }
