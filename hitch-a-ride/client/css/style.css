@@ -560,3 +560,11 @@ main.wide { max-width: 1200px; }
 .taxi-car-photo .photo-fallback { display: none; min-height: 150px; padding: 18px; align-items: center; justify-content: center; text-align: center; color: #687080; font-size: 13px; }
 .taxi-car-photo .photo-fallback.is-visible { display: flex; }
 .taxi-fleet-car figcaption small { display: block; margin-top: 5px; color: #7b8190; font-size: 10px; line-height: 1.35; }
+
+
+/* Car catalog image area */
+.taxi-car-photo { position: relative; min-height: 165px; overflow: hidden; background: #f1f2f4; }
+.taxi-car-photo img { display: block; width: 100%; height: 165px; object-fit: cover; }
+.taxi-car-photo .photo-fallback { min-height: 165px; padding: 16px; align-items: center; justify-content: center; text-align: center; color: #727987; font-size: 13px; }
+.taxi-car-photo .photo-fallback:not([hidden]) { display: flex; }
+.taxi-fleet-car .photo-credit { display: block; margin-top: 5px; font-size: 10px; line-height: 1.35; }
