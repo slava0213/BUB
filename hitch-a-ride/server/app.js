@@ -2,7 +2,6 @@
 const express      = require('express');
 const bcrypt       = require('bcryptjs');
 const cookieParser = require('cookie-parser');
-const cors         = require('cors');
 const crypto       = require('crypto');
 const path         = require('path');
 const fs           = require('fs');
@@ -16,7 +15,6 @@ app.set('trust proxy', 1);
 
 app.use(express.json({ limit: '100kb' }));
 app.use(cookieParser());
-app.use(cors({ origin: true, credentials: true }));
 
 /* ─────────── Раздача клиента ─────────── */
 
@@ -31,6 +29,13 @@ let clientPath = null;
 for (const p of candidates) {
   if (fs.existsSync(path.join(p, 'index.html'))) { clientPath = p; break; }
 }
+
+app.use('/vendor/leaflet', express.static(path.join(__dirname, 'node_modules', 'leaflet', 'dist')));
+
+app.get('/api/health', function (req, res) {
+  res.set('Cache-Control', 'no-store');
+  res.json({ ok: true, service: 'bub-carpool', time: new Date().toISOString() });
+});
 
 if (clientPath) {
   console.log('📁 Раздача клиента из:', clientPath);
