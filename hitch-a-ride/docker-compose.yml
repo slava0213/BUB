@@ -1,8 +1,8 @@
 services:
   bub:
     build:
-      context: ./server
-      dockerfile: Dockerfile
+      context: ..
+      dockerfile: hitch-a-ride/server/Dockerfile
     container_name: bub-carpool
     restart: unless-stopped
     env_file:
