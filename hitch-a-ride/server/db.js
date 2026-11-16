@@ -5,7 +5,7 @@ const path = require('path');
 const DB_FILE = path.join(__dirname, 'carpool.json');
 const TMP_FILE = DB_FILE + '.tmp';
 
-const EMPTY_DB = { users: [], trips: [], requests: [], messages: [], reviews: [] };
+const EMPTY_DB = { users: [], trips: [], requests: [], messages: [], reviews: [], support_tickets: [], support_messages: [] };
 
 let _db = null;
 
