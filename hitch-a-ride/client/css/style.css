@@ -466,3 +466,89 @@ main.wide { max-width: 1200px; }
   .photo-scene { min-height: 300px; }
   .photo-chip { top: .8rem; right: .8rem; }
 }
+
+
+/* Карточки автопарка в стиле Яндекс Go: чистые поверхности и жёлтый акцент */
+.taxi-fleet-class {
+  border: 1px solid #e8e8e8;
+  border-left: 4px solid #ffcc00;
+  border-radius: 18px;
+  padding: 1.25rem;
+  background: #fff;
+  box-shadow: 0 4px 18px rgba(0,0,0,.045);
+}
+.taxi-fleet-class h3 {
+  display: flex;
+  align-items: center;
+  gap: .55rem;
+  border: 0;
+  padding: 0;
+  font-size: 1.28rem;
+}
+.taxi-fleet-class h3::before {
+  content: '';
+  width: 9px;
+  height: 9px;
+  border-radius: 3px;
+  background: #ffcc00;
+  transform: rotate(45deg);
+}
+.taxi-fleet-car {
+  flex: 0 0 248px;
+  border: 1px solid #ededed;
+  border-radius: 16px;
+  overflow: hidden;
+  background: #fff;
+  text-align: left;
+  transition: transform .18s ease, box-shadow .18s ease;
+}
+.taxi-fleet-car:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 24px rgba(0,0,0,.10);
+}
+.taxi-car-photo {
+  height: 150px;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  background: linear-gradient(135deg,#f5f5f5,#ececec);
+}
+.taxi-car-photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.taxi-fleet-car figcaption {
+  display: grid;
+  gap: .12rem;
+  padding: .75rem .9rem .85rem;
+  background: #fff;
+  color: #222;
+  font-size: .92rem;
+  font-weight: 750;
+}
+.taxi-fleet-car figcaption small {
+  color: #858585;
+  font-size: .73rem;
+  font-weight: 500;
+}
+.taxi-fleet-class .round-arrow {
+  background: #ffcc00;
+  color: #222;
+}
+.taxi-fleet-class .round-arrow:hover {
+  background: #222;
+  color: #ffcc00;
+}
+@media (min-width: 1200px) {
+  .taxi-fleet-class .fleet-cars {
+    grid-template-columns: repeat(auto-fit,minmax(210px,1fr));
+    gap: .9rem;
+  }
+  .taxi-fleet-class .taxi-fleet-car { width: 100%; }
+}
+@media (max-width: 640px) {
+  .taxi-fleet-car { flex-basis: 220px; }
+  .taxi-car-photo { height: 132px; }
+}
