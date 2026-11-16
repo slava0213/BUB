@@ -1,0 +1,6 @@
+build:
+  dockerfile: hitch-a-ride/server/Dockerfile
+
+run:
+  containerPort: 3000
+  persistenceMount: /data
