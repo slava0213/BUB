@@ -3,7 +3,7 @@ services:
     name: bub-carpool
     runtime: node
     plan: free
-    rootDir: server
+    rootDir: hitch-a-ride/server
     buildCommand: npm install
     startCommand: npm start
     envVars:
