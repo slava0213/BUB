@@ -552,3 +552,11 @@ main.wide { max-width: 1200px; }
   .taxi-fleet-car { flex-basis: 220px; }
   .taxi-car-photo { height: 132px; }
 }
+
+
+/* Fleet image loading and graceful fallback */
+.taxi-car-photo { position: relative; overflow: hidden; min-height: 150px; background: #f3f4f6; }
+.taxi-car-photo img { display: block; width: 100%; height: 170px; object-fit: cover; }
+.taxi-car-photo .photo-fallback { display: none; min-height: 150px; padding: 18px; align-items: center; justify-content: center; text-align: center; color: #687080; font-size: 13px; }
+.taxi-car-photo .photo-fallback.is-visible { display: flex; }
+.taxi-fleet-car figcaption small { display: block; margin-top: 5px; color: #7b8190; font-size: 10px; line-height: 1.35; }
