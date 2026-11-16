@@ -144,6 +144,15 @@
     if (row) openTicket(row.dataset.ticket,row.dataset.key);
   });
   document.getElementById('support-refresh').addEventListener('click',loadTickets);
+  document.getElementById('support-access-form').addEventListener('submit', async e => {
+    e.preventDefault();
+    const id = Number(e.currentTarget.ticket_id.value);
+    const key = String(e.currentTarget.access_key.value || '').trim();
+    if (!id || !key) return;
+    saveLocal({id:id,key:key});
+    await openTicket(id,key);
+    await loadTickets();
+  });
   getCurrentUser().then(user => {
     if (user) {
       document.getElementById('support-name').value = user.name || '';
