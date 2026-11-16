@@ -1,0 +1,21 @@
+services:
+  bub:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    container_name: bub-carpool
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+      DB_PATH: /data/carpool.json
+      SEED_DEMO: "0"
+    volumes:
+      - bub-data:/data
+    ports:
+      - "127.0.0.1:3000:3000"
+
+volumes:
+  bub-data:
