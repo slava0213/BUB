@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="ru"><head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#fcc90e"><title>Поддержка BUB</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css"><link rel="stylesheet" href="css/support.css">
+</head><body data-page="support">
+<main class="support-main">
+<section class="support-hero"><div><span class="support-eyebrow">BUB · HELP CENTER</span><h1>Мы рядом, если что-то пошло не так.</h1><p>Расскажите, что случилось. Поможем разобраться с поездкой, аккаунтом или работой сервиса.</p></div><div class="support-hero-art" aria-hidden="true"><span class="support-orbit orbit-one"></span><span class="support-orbit orbit-two"></span><div class="support-headset">?</div><span class="support-spark spark-one">✦</span><span class="support-spark spark-two">✳</span></div></section>
+<section class="support-shortcuts"><a href="#new-ticket"><span>01</span><b>Создать обращение</b><small>Опишите вопрос — мы ответим</small></a><a href="#my-tickets"><span>02</span><b>Мои обращения</b><small>Статусы и история переписки</small></a><a href="#faq"><span>03</span><b>Частые вопросы</b><small>Быстрые ответы о BUB</small></a></section>
+<div class="support-columns">
+<section class="support-card" id="new-ticket"><div class="support-section-title"><div><span class="support-eyebrow">НАПИШИТЕ НАМ</span><h2>Новое обращение</h2><p>Опишите ситуацию и укажите, что вы ожидали увидеть.</p></div><span class="support-title-icon">✉</span></div>
+<div id="support-alert" class="support-alert" hidden></div>
+<form id="support-form" class="support-form">
+<div class="support-field-grid"><label>Ваше имя<input name="name" id="support-name" maxlength="80" placeholder="Как к вам обращаться" required></label><label>Электронная почта<input name="email" id="support-email" type="email" maxlength="160" placeholder="name@example.com" required></label></div>
+<label>Тема обращения<input name="subject" maxlength="120" placeholder="Например, не получается отправить заявку" required></label>
+<label>Категория<select name="category"><option>Проблема с аккаунтом</option><option>Поиск и создание поездки</option><option>Чат и сообщения</option><option>Безопасность и жалоба</option><option>Ошибка на сайте</option><option>Предложение по улучшению</option><option>Другое</option></select></label>
+<label>Опишите проблему<textarea name="message" rows="5" minlength="10" maxlength="3000" placeholder="Что произошло? На какой странице? Какие действия привели к проблеме?" required></textarea></label>
+<div class="support-form-foot"><span>Не отправляйте пароли и платёжные данные.</span><button class="btn btn-large" type="submit">Отправить обращение →</button></div>
+</form><div id="support-created" class="support-created" hidden></div></section>
+<aside class="support-side"><div class="support-card support-promise"><span class="support-eyebrow">ВАЖНО ЗНАТЬ</span><h3>Обращение не потеряется</h3><p>После отправки появится номер заявки и персональный ключ. Сохраните его, чтобы вернуться к переписке даже без входа в аккаунт.</p><div class="support-lock">🔐 <span>Переписка доступна только вам и команде поддержки</span></div></div><div class="support-card support-hours"><div class="support-online-dot"></div><div><b>Поддержка BUB</b><small>Обращения принимаются круглосуточно</small></div></div></aside>
+</div>
+<section class="support-card support-tickets" id="my-tickets"><div class="support-section-title"><div><span class="support-eyebrow">ВАША ИСТОРИЯ</span><h2>Мои обращения</h2><p>Откройте заявку, чтобы посмотреть ответ или продолжить диалог.</p></div><button class="btn btn-secondary btn-small" id="support-refresh" type="button">Обновить</button></div><div id="support-ticket-list" class="support-ticket-list"><div class="support-empty">Загружаем обращения…</div></div><div id="support-thread" class="support-thread" hidden></div></section>
+<section class="support-faq" id="faq"><div class="support-section-title"><div><span class="support-eyebrow">БЫСТРАЯ ПОМОЩЬ</span><h2>Частые вопросы</h2></div></div><div class="faq-grid">
+<details><summary>Не могу войти в аккаунт</summary><p>Проверьте адрес электронной почты и раскладку клавиатуры. Если пароль не подходит, создайте обращение в категории «Проблема с аккаунтом».</p></details>
+<details><summary>Как отменить заявку на поездку?</summary><p>Откройте профиль и найдите отправленную заявку. Если отмена недоступна, напишите водителю или обратитесь в поддержку.</p></details>
+<details><summary>Водитель не отвечает</summary><p>Напишите ему в чате поездки. Если до отправления осталось мало времени, сообщите нам номер поездки.</p></details>
+<details><summary>Как пожаловаться на пользователя?</summary><p>Создайте обращение в категории «Безопасность и жалоба» и укажите ссылку на профиль или номер поездки.</p></details>
+</div></section>
+<div class="support-admin-entry" id="support-admin-entry" hidden><span>Инструменты команды поддержки</span><a class="btn btn-dark" href="#my-tickets">Открыть очередь</a></div>
+</main>
+<script src="js/config.js"></script><script src="js/api.js"></script><script src="js/auth.js"></script><script src="js/layout.js"></script><script src="js/support.js"></script>
+</body></html>
