@@ -608,6 +608,87 @@ app.get('/api/trips/:id/tracking', auth, trackAccess, async function (req, res) 
   }
 });
 
+
+/* ─────────── BUB SUPPORT ─────────── */
+const SUPPORT_ADMIN_EMAIL = String(process.env.SUPPORT_ADMIN_EMAIL || '').trim().toLowerCase();
+function supportIsAdmin(userId) {
+  const u = db.prepare('SELECT * FROM users WHERE id = ?').get(userId);
+  return !!(SUPPORT_ADMIN_EMAIL && u && String(u.email).toLowerCase() === SUPPORT_ADMIN_EMAIL);
+}
+function supportView(t) {
+  return { id:t.id, name:t.name, email:t.email, subject:t.subject, category:t.category,
+    status:t.status, created_at:t.created_at, updated_at:t.updated_at || t.created_at };
+}
+app.post('/api/support/tickets', function(req,res) {
+  const viewer = optional(req);
+  const name = String(req.body.name || (viewer && viewer.name) || '').trim().slice(0,80);
+  const email = String(req.body.email || '').trim().toLowerCase().slice(0,160);
+  const subject = String(req.body.subject || '').trim().slice(0,120);
+  const category = String(req.body.category || 'Другое').trim().slice(0,50);
+  const message = String(req.body.message || '').trim().slice(0,3000);
+  if (!name || !/^\S+@\S+\.\S+$/.test(email) || !subject || message.length < 10)
+    return res.status(400).json({error:'Укажите имя, корректную почту, тему и сообщение не короче 10 символов'});
+  const key = crypto.randomBytes(24).toString('hex');
+  const ticket = db.prepare('INSERT INTO support_tickets (owner_id,name,email,subject,category,status,access_key) VALUES (?,?,?,?,?,?,?)')
+    .run(viewer ? viewer.id : null,name,email,subject,category,'Новое',key);
+  db.prepare('INSERT INTO support_messages (ticket_id,author_id,author_type,author_name,text) VALUES (?,?,?,?,?)')
+    .run(ticket.lastInsertRowid,viewer ? viewer.id : null,'user',name,message);
+  res.json({id:ticket.lastInsertRowid,access_key:key,status:'Новое'});
+});
+app.get('/api/support/tickets', auth, function(req,res) {
+  const admin = supportIsAdmin(req.user.id);
+  let tickets = db.prepare('SELECT * FROM support_tickets').all();
+  if (!admin) tickets = tickets.filter(t => t.owner_id === req.user.id);
+  tickets.sort((a,b) => (b.updated_at || b.created_at || '').localeCompare(a.updated_at || a.created_at || ''));
+  res.json({admin:admin,tickets:tickets.map(supportView)});
+});
+app.get('/api/support/tickets/:id', function(req,res) {
+  const viewer = optional(req), id = Number(req.params.id);
+  const ticket = db.prepare('SELECT * FROM support_tickets WHERE id = ?').get(id);
+  if (!ticket) return res.status(404).json({error:'Обращение не найдено'});
+  const admin = !!(viewer && supportIsAdmin(viewer.id));
+  const key = String(req.query.key || '');
+  if (!admin && !(viewer && ticket.owner_id === viewer.id) && !(ticket.access_key && key && ticket.access_key === key))
+    return res.status(403).json({error:'Нет доступа к этому обращению'});
+  const messages = db.prepare('SELECT * FROM support_messages').all()
+    .filter(m => Number(m.ticket_id) === id).sort((a,b) => (a.created_at || '').localeCompare(b.created_at || ''));
+  res.json({ticket:supportView(ticket),messages:messages,admin:admin});
+});
+app.post('/api/support/tickets/:id/messages', function(req,res) {
+  const viewer = optional(req), id = Number(req.params.id);
+  const ticket = db.prepare('SELECT * FROM support_tickets WHERE id = ?').get(id);
+  if (!ticket) return res.status(404).json({error:'Обращение не найдено'});
+  const admin = !!(viewer && supportIsAdmin(viewer.id));
+  const owner = !!(viewer && ticket.owner_id === viewer.id);
+  const key = String(req.body.access_key || req.headers['x-support-key'] || '');
+  if (!admin && !owner && !(ticket.access_key && key && ticket.access_key === key))
+    return res.status(403).json({error:'Нет доступа к переписке'});
+  if (ticket.status === 'Решено' && !admin)
+    return res.status(400).json({error:'Обращение закрыто. Если проблема осталась, создайте новое.'});
+  const message = String(req.body.message || '').trim().slice(0,3000);
+  if (!message) return res.status(400).json({error:'Введите сообщение'});
+  const u = viewer ? db.prepare('SELECT * FROM users WHERE id = ?').get(viewer.id) : null;
+  db.prepare('INSERT INTO support_messages (ticket_id,author_id,author_type,author_name,text) VALUES (?,?,?,?,?)')
+    .run(id,admin ? viewer.id : (viewer ? viewer.id : null),admin ? 'support' : 'user',
+      admin ? (u.name || 'Поддержка') : (u ? u.name : ticket.name),message);
+  const status = admin ? 'Ожидает ответа' : 'В работе';
+  db.prepare('UPDATE support_tickets SET status = ?, updated_at = ? WHERE id = ?')
+    .run(status,new Date().toISOString(),id);
+  res.json({ok:true,status:status});
+});
+app.put('/api/support/tickets/:id/status', auth, function(req,res) {
+  if (!supportIsAdmin(req.user.id)) return res.status(403).json({error:'Только администратор поддержки'});
+  const id = Number(req.params.id), ticket = db.prepare('SELECT * FROM support_tickets WHERE id = ?').get(id);
+  if (!ticket) return res.status(404).json({error:'Обращение не найдено'});
+  const status = String(req.body.status || '');
+  if (!['Новое','В работе','Ожидает ответа','Решено'].includes(status))
+    return res.status(400).json({error:'Некорректный статус'});
+  db.prepare('UPDATE support_tickets SET status = ?, updated_at = ? WHERE id = ?')
+    .run(status,new Date().toISOString(),id);
+  res.json({ok:true,status:status});
+});
+/* ─────────── END BUB SUPPORT ─────────── */
+
 /* ─────────── REVIEWS ─────────── */
 
 // Отзывы, которые оставил я
