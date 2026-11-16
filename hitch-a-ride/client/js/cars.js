@@ -53,6 +53,29 @@
             car[0] + '</span><small>Пример автомобиля</small></figcaption></figure>';
         }).join('') + '</div><button type="button" class="round-arrow" data-dir="1" data-row="' + i + '" aria-label="Вперёд">&#8594;</button></div></section>';
     }).join('');
+    // Получаем метаданные Wikimedia: авторство и лицензию показываем прямо под фото.
+    el.querySelectorAll('.taxi-fleet-car').forEach(function (card) {
+      var image = card.querySelector('img');
+      var credit = card.querySelector('figcaption small');
+      var parts = image.getAttribute('src').match(/[?&]make=([^&]+).*?[?&]model=([^&]+)/);
+      if (!parts) return;
+      var metadataUrl = 'https://carapi.trustcar.info/getImage?make=' + parts[1] +
+        '&model=' + parts[2] + '&format=json';
+      fetch(metadataUrl).then(function (response) {
+        if (!response.ok) throw new Error('Фото не найдено');
+        return response.json();
+      }).then(function (data) {
+        if (data && data.found && data.image_url) {
+          image.src = data.image_url;
+          credit.textContent = data.attribution || ((data.author || 'Wikimedia Commons') +
+            (data.license ? ' · ' + data.license : ''));
+        } else {
+          credit.textContent = 'Фото модели пока не найдено';
+        }
+      }).catch(function () {
+        credit.textContent = 'Фото из открытого каталога';
+      });
+    });
     el.addEventListener('click', function (event) {
       var button = event.target.closest('.round-arrow');
       if (!button) return;
