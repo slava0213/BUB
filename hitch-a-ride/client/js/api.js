@@ -1,4 +1,5 @@
 // client/js/api.js — API-клиент и общие помощники
+// The client is served by the Node backend on the same origin; cookies stay first-party.
 const API = '/api';
 
 const Api = {
