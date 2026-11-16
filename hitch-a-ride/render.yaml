@@ -13,3 +13,5 @@ services:
         generateValue: true
       - key: SEED_DEMO
         value: "1"
+      - key: SUPPORT_ADMIN_EMAIL
+        sync: false
