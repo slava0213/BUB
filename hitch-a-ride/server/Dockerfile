@@ -6,5 +6,7 @@ COPY hitch-a-ride/server/ ./
 COPY hitch-a-ride/client/ /client/
 ENV NODE_ENV=production
 ENV PORT=3000
+ENV DB_PATH=/data/carpool.json
+ENV SEED_DEMO=0
 EXPOSE 3000
 CMD ["npm", "start"]
