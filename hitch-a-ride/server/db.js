@@ -2,7 +2,7 @@
 const fs   = require('fs');
 const path = require('path');
 
-const DB_FILE = path.join(__dirname, 'carpool.json');
+const DB_FILE = process.env.DB_PATH || path.join(__dirname, 'carpool.json');
 const TMP_FILE = DB_FILE + '.tmp';
 
 const EMPTY_DB = { users: [], trips: [], requests: [], messages: [], reviews: [], support_tickets: [], support_messages: [] };
@@ -12,6 +12,7 @@ let _db = null;
 function clone(x) { return JSON.parse(JSON.stringify(x)); }
 
 function loadDb() {
+  fs.mkdirSync(path.dirname(DB_FILE), { recursive: true });
   if (fs.existsSync(DB_FILE)) {
     try {
       _db = JSON.parse(fs.readFileSync(DB_FILE, 'utf8'));
