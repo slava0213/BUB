@@ -1,10 +1,15 @@
 services:
   - type: web
-    name: hitch-a-ride
+    name: bub-carpool
     runtime: node
+    plan: free
     rootDir: server
     buildCommand: npm install
     startCommand: npm start
     envVars:
+      - key: NODE_ENV
+        value: production
       - key: JWT_SECRET
         generateValue: true
+      - key: SEED_DEMO
+        value: "1"
